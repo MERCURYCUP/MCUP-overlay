@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MCUP Overlay</title>
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+  }
+
+  .text {
+    position: absolute;
+    color: white;
+    font-weight: 700;
+    text-shadow: 0 0 10px black;
+  }
+
+  #time {
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 48px;
+  }
+
+  #player-left {
+    top: 160px;
+    left: 180px;
+    font-size: 46px;
+  }
+
+  #team-left {
+    top: 220px;
+    left: 180px;
+    font-size: 36px;
+  }
+
+  #player-right {
+    top: 160px;
+    right: 180px;
+    font-size: 46px;
+  }
+
+  #team-right {
+    top: 220px;
+    right: 180px;
+    font-size: 36px;
+  }
+
+  .logo {
+    position: absolute;
+    width: 160px;
+  }
+
+  #logo-left {
+    top: 120px;
+    left: 10px;
+  }
+
+  #logo-right {
+    top: 120px;
+    right: 10px;
+  }
+</style>
+
+</head>
+<body>
+
+<img id="logo-left" class="logo">
+<img id="logo-right" class="logo">
+
+<div id="time" class="text"></div>
+
+<div id="player-left" class="text"></div>
+<div id="team-left" class="text"></div>
+
+<div id="player-right" class="text"></div>
+<div id="team-right" class="text"></div>
+
+<script>
+
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyLTaQvtiR0y9N8vh7HJ9I21nR4jQIBugSkZVH8OlOcZxdyQDTfRTE6aVYeSXg5nK0U/exec";
+
+async function updateOverlay() {
+  try {
+    const res = await fetch(SCRIPT_URL + "?t=" + Date.now());
+    const data = await res.json();
+    if (!data.next_game) return;
+
+    const g = data.next_game;
+
+    document.getElementById("time").textContent = g.start_time;
+
+    document.getElementById("player-left").textContent = g.player_left;
+    document.getElementById("team-left").textContent = g.team_left;
+
+    document.getElementById("player-right").textContent = g.player_right;
+    document.getElementById("team-right").textContent = g.team_right;
+
+    document.getElementById("logo-left").src = g.logo_left;
+    document.getElementById("logo-right").src = g.logo_right;
+
+  } catch (err) {
+    console.error("Ошибка загрузки данных:", err);
+  }
+}
+
+updateOverlay();
+setInterval(updateOverlay, 10000);
+
+</script>
+
+</body>
+</html>
